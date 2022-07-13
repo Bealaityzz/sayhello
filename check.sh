@@ -13,7 +13,6 @@ function get_server_info() {
 	system_hostname=$(hostname | awk '{print $1}')
 
 	#获取服务器IP
-
 	address=$(/sbin/ip a|grep "global"|awk '{print $2}' |awk -F/ '{print $1}')
 
 	#获取服务器系统版本
@@ -30,7 +29,7 @@ function get_server_info() {
            echo -e "服务器外网连通: 【正常】\n" >> $path
 	else
 	   let errorCount+=1
-           echo -e "服务器外网连通: 【异常】\n" >> $errorPath
+           echo -e "服务器外网无法连通: 【异常】\n" >> $errorPath
         fi
 
 	echo -e "系统版本:" ${os_version} '\n'>> $path
@@ -57,7 +56,6 @@ function check_cpu_usage() {
 	echo -e CPU 平均5分钟负载：$load_5 "\n" >> $path
 	echo -e CPU 平均15分钟：$load_15 "\n" >> $path
 
-	#cpu阀值95
 	if [[ ${Cpu_use} -lt 95 ]] 
 
 	then
@@ -65,7 +63,7 @@ function check_cpu_usage() {
 
 	else
 	    let errorCount+=1
-	    echo -e "CPU使用率巡检结果：【异常】\n" >> $errorPath
+	    echo -e "CPU使用率超出阀值：【异常】\n" >> $errorPath
 	fi
 	
 	echo -e "-----------------------------------\n">> $path
@@ -76,6 +74,7 @@ function check_cpu_usage() {
 
 function check_disk_usage(){
 
+	
 	disk_partation=`df -Th | awk 'BEGIN{OFS="="}/^\/dev/{print $NF,int($6)}'`
 	flag="false"
 	for disk in $disk_partation
@@ -83,16 +82,17 @@ function check_disk_usage(){
 	    p_name=${disk%=*}
 	    disk_usage=${disk#*=}
 	    echo -e "磁盘分区：$p_name，使用率：$disk_usage% \n" >> $path
-	#磁盘阀值
+
 	    if [[ ${disk_usage} -gt 90 ]]
 	    then
 		flag="true"
-	        echo -e "分区${p_name}使用率巡检结果：【异常】\n" >> $errorPath
+	        echo -e "分区${p_name}使用率超出阀值：【异常】\n" >> $errorPath
 	    else
 	        echo -e "分区${p_name}使用率巡检结果：【正常】\n" >> $path
 	    fi
 	done
 	if [ $flag == "true" ];then
+	   sed -i "1i磁盘空间超出阀值：【异常】\n" $errorPath
 	   let errorCount+=1
 	fi
 
@@ -138,7 +138,7 @@ function check_mem_usage() {
 
 		echo -e "内存使用率：$PERCENT\n" >> $path
 
-		echo -e "内存使用情况巡检结果：【异常】\n\n" >> $errorPath
+		echo -e "内存使用率超出阀值：【异常】\n\n" >> $errorPath
 
 	else
 
@@ -169,11 +169,14 @@ function check_url(){
     else
     	    let errorCount+=1
             echo -e "站点 $website \n" >> $path
-            echo -e "站点巡检结果：【异常】\n" >> $errorPath
+            echo -e "站点无法访问：【异常】\n" >> $errorPath
 
     fi
 
 }
+
+
+
 
 
 function go_execute(){
@@ -188,7 +191,8 @@ function go_execute(){
 	   cat $errorPath
 	else
 	   sed -i "1i\共检测5条项目,全部正常\n" $path	
-	   cat $path
+	   echo -e "共检测5条项目,全部正常\n"	
+	   #cat $path
 	fi
 }
 
