@@ -13,6 +13,7 @@ function get_server_info() {
 	system_hostname=$(hostname | awk '{print $1}')
 
 	#获取服务器IP
+
 	address=$(/sbin/ip a|grep "global"|awk '{print $2}' |awk -F/ '{print $1}')
 
 	#获取服务器系统版本
@@ -56,6 +57,7 @@ function check_cpu_usage() {
 	echo -e CPU 平均5分钟负载：$load_5 "\n" >> $path
 	echo -e CPU 平均15分钟：$load_15 "\n" >> $path
 
+	#cpu阀值95
 	if [[ ${Cpu_use} -lt 95 ]] 
 
 	then
@@ -74,7 +76,6 @@ function check_cpu_usage() {
 
 function check_disk_usage(){
 
-	
 	disk_partation=`df -Th | awk 'BEGIN{OFS="="}/^\/dev/{print $NF,int($6)}'`
 	flag="false"
 	for disk in $disk_partation
@@ -82,7 +83,7 @@ function check_disk_usage(){
 	    p_name=${disk%=*}
 	    disk_usage=${disk#*=}
 	    echo -e "磁盘分区：$p_name，使用率：$disk_usage% \n" >> $path
-
+	#磁盘阀值
 	    if [[ ${disk_usage} -gt 90 ]]
 	    then
 		flag="true"
@@ -173,9 +174,6 @@ function check_url(){
     fi
 
 }
-
-
-
 
 
 function go_execute(){
