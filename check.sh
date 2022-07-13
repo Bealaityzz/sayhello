@@ -78,11 +78,8 @@ function check_cpu_usage() {
 
 }
 
-
-
 function check_disk_usage(){
 
-	
 	disk_partation=`df -Th | awk 'BEGIN{OFS="="}/^\/dev/{print $NF,int($6)}'`
 	flag="false"
 	for disk in $disk_partation
@@ -107,8 +104,6 @@ function check_disk_usage(){
 	echo -e "-----------------------------------\n">> $path
 
 }
-
-
 
 function check_mem_usage() {
 
@@ -166,7 +161,6 @@ function check_mem_usage() {
 
 }
 
-
 function check_url(){
 	website="https://www.baidu.com/"
     wget --spider -q -o /dev/null  --tries=1 -T 5 ${website}
@@ -182,10 +176,6 @@ function check_url(){
     fi
 
 }
-
-
-
-
 
 function go_execute(){
 	get_server_info
