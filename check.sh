@@ -5,23 +5,33 @@ cat /dev/null > $path
 cat /dev/null > $errorPath
 errorCount=0
 function get_server_info() {
-
+	#获取时间
 	check_time=$(date +%Y年%m月%d日%H时%M分)
 
 	#获取主机名
-
 	system_hostname=$(hostname | awk '{print $1}')
 
 	#获取服务器IP
 	address=$(/sbin/ip a|grep "global"|awk '{print $2}' |awk -F/ '{print $1}')
 
 	#获取服务器系统版本
-
 	os_version=$(cat /etc/issue | awk '{print $1" "$2}')
+
+	#获取网关
+	gateway=$(ip route |awk 'NR==1'| awk '{print $3}')
+
+	#获取DNS
+	DNS=$(cat /etc/resolv.conf|grep nameserver |tail -1| awk '{print $2}')
 
 	echo -e "巡检时间：${check_time} \n" >> $path
 
 	echo -e "服务器IP: ${address} \n" >> $path
+
+	echo -e "网关: ${gateway} \n" >> $path
+
+	echo -e "DNS：${DNS} \n" >> $path
+
+	echo -e "系统版本:" ${os_version} '\n'>> $path
 
 	ping 114.114.114.114 -c 3 &> /dev/null
 
@@ -31,8 +41,6 @@ function get_server_info() {
 	   let errorCount+=1
            echo -e "服务器外网无法连通: 【异常】\n" >> $errorPath
         fi
-
-	echo -e "系统版本:" ${os_version} '\n'>> $path
 
 	echo -e "-----------------------------------\n">> $path
 
@@ -164,12 +172,12 @@ function check_url(){
     wget --spider -q -o /dev/null  --tries=1 -T 5 ${website}
     if [ $? -eq 0 ]
     then
-            echo -e "站点 $website \n" >> $path
-            echo -e "站点巡检结果：【正常】\n" >> $path
+            echo -e "网页 $website \n" >> $path
+            echo -e "网页巡检：【正常】\n" >> $path
     else
     	    let errorCount+=1
-            echo -e "站点 $website \n" >> $path
-            echo -e "站点无法访问：【异常】\n" >> $errorPath
+            echo -e "网页 $website \n" >> $path
+            echo -e "网页巡检：【异常】\n" >> $errorPath
 
     fi
 
