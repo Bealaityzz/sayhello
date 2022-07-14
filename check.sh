@@ -44,9 +44,7 @@ function get_server_info() {
 
 	echo -e "-----------------------------------\n">> $path
 
-
 }
-
 
 function check_cpu_usage() {
 
