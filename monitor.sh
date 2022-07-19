@@ -186,7 +186,7 @@ function go_execute(){
            let normal=5-$errorCount
 	   sed -i "1i\共检测5条项目,异常$errorCount条,正常${normal}条\n" $errorPath
 	   cat $errorPath
-       exit 1
+        exit 1
 	else
 	   sed -i "1i\共检测5条项目,全部正常\n" $path	
 	   echo -e "共检测5条项目,全部正常\n"	
