@@ -4,9 +4,10 @@ errorPath="error_monitor.txt"
 cat /dev/null > $path
 cat /dev/null > $errorPath
 errorCount=0
-cpu_rate=95
-disk_rate=80
-mem_rate=80
+cpu_rate="cpu=$1"
+disk_rate="disk=$2"
+mem_rate="mem=$3"
+
 function get_server_info() {
 	#获取时间
 	check_time=$(date +%Y年%m月%d日%H时%M分)
@@ -186,7 +187,7 @@ function go_execute(){
            let normal=5-$errorCount
 	   sed -i "1i\共检测5条项目,异常$errorCount条,正常${normal}条\n" $errorPath
 	   cat $errorPath
-       exit 1
+        exit 1
 	else
 	   sed -i "1i\共检测5条项目,全部正常\n" $path	
 	   echo -e "共检测5条项目,全部正常\n"	
