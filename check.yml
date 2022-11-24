@@ -1,0 +1,10 @@
+---
+- hosts: all
+  tasks:
+  - name: Copy shell
+      copy:
+      src: "ops/monitor.sh"
+      dest: ~/monitor.sh
+
+  - name: "demo shell"
+      shell: "bash ~/monitor.sh cpu={{ cpu }} disk={{ disk }} mem={{ mem  }}"

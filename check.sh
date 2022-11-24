@@ -4,9 +4,9 @@ errorPath="error_monitor.txt"
 cat /dev/null > $path
 cat /dev/null > $errorPath
 errorCount=0
-cpu_rate=95
-disk_rate=90
-mem_rate=90
+cpu_rate=0.1
+disk_rate=0.1
+mem_rate=0.1
 function get_server_info() {
 
 	check_time=$(date +%Y年%m月%d日%H时%M分)
